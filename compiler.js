@@ -10,12 +10,6 @@
 // (subtract 4 2)            subtract(4, 2)
 // add 2 (subtract 4 2))    add(2, subtract(4, 2))
 
-// let input = "(add 2 (subtract 4 2))";
-// for(let i = 0; i < input.length; i++){
-//     console.log(input[i])
-// }
-
-
 const tokenizer = (input) => {
   if (isValidInput(input) !== "true") return "Not a valid input";
   tokens = identifier(input);
