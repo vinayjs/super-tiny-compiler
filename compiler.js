@@ -95,6 +95,7 @@ const parser = (tokens) => {
   while (current < tokens.length) {
     ast.body.push(walk());
   }
+  return ast
 };
 
 // let tokenz = [
