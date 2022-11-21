@@ -81,6 +81,7 @@ const parser = (tokens) => {
         (token.type === "paren" && token.value !== ")")
       ) {
         node.params.push(walk());
+        // console.log(node.params , "hi")
         token = tokens[current];
       }
       current++;
@@ -95,19 +96,61 @@ const parser = (tokens) => {
   while (current < tokens.length) {
     ast.body.push(walk());
   }
-  return ast
+  // console.log(ast.body[0].params[1].params)
+  return ast;
 };
 
-// let tokenz = [
-//   { type: "paren", value: "(" },
-//   { type: "string", value: "add" },
-//   { type: "number", value: "2" },
-//   { type: "paren", value: "(" },
-//   { type: "string", value: "subtract" },
-//   { type: "number", value: "4" },
-//   { type: "number", value: "2" },
-//   { type: "paren", value: ")" },
-//   { type: "paren", value: ")" },
-// ];
 
-// console.log(parser(tokenz));
+// function accepts an AST amd traverse through the nodes. 
+const traverser = (ast, visitor) => {
+  let traverseArray = (array, parent) => {
+    array.forEach((child) => {
+      traverseNode(child, parent);
+    });
+  }
+
+  const traverseNode = (node, parent) => {
+    let methods = visitor[node.type];
+
+    if (methods && methods.enter) {
+      methods.enter(node, parent);
+    }
+
+    switch (node.type) {
+      case "Program":
+        traverseArray(node.body, node);
+        break;
+
+      case "CallExpression":
+        traverseArray(node.params, node);
+        break;
+
+      case "NumberLiteral":
+      case "StringLiteral":
+        break;
+
+      default:
+        throw new TypeError(node.type);
+    }
+
+    if (methods && methods.exit) {
+      methods.exit(node, parent);
+    }
+  };
+
+  traverseNode(ast, null);
+};
+
+let tokens = [
+  { type: "paren", value: "(" },
+  { type: "string", value: "add" },
+  { type: "number", value: "2" },
+  { type: "paren", value: "(" },
+  { type: "string", value: "subtract" },
+  { type: "number", value: "4" },
+  { type: "number", value: "2" },
+  { type: "paren", value: ")" },
+  { type: "paren", value: ")" },
+];
+
+console.log(parser(tokens));
