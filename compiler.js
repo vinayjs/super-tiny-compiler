@@ -100,22 +100,20 @@ const parser = (tokens) => {
   return ast;
 };
 
-
-// function accepts an AST amd traverse through the nodes. 
+// function accepts an AST and traverse through the nodes depth-first.
+// visitor - object that has methods that will accept different node types.
 const traverser = (ast, visitor) => {
   let traverseArray = (array, parent) => {
     array.forEach((child) => {
       traverseNode(child, parent);
     });
-  }
-
+  };
   const traverseNode = (node, parent) => {
     let methods = visitor[node.type];
 
     if (methods && methods.enter) {
       methods.enter(node, parent);
     }
-
     switch (node.type) {
       case "Program":
         traverseArray(node.body, node);
@@ -132,25 +130,76 @@ const traverser = (ast, visitor) => {
       default:
         throw new TypeError(node.type);
     }
-
     if (methods && methods.exit) {
       methods.exit(node, parent);
     }
   };
-
   traverseNode(ast, null);
 };
 
-let tokens = [
-  { type: "paren", value: "(" },
-  { type: "string", value: "add" },
-  { type: "number", value: "2" },
-  { type: "paren", value: "(" },
-  { type: "string", value: "subtract" },
-  { type: "number", value: "4" },
-  { type: "number", value: "2" },
-  { type: "paren", value: ")" },
-  { type: "paren", value: ")" },
-];
+//function will take the AST that we have built and pass it to our traverser function and will create a new AST.
+const transformer = (ast) => {
+  let newAst = {
+    type: "Program",
+    body: [],
+  };
 
-console.log(parser(tokens));
+  ast.context = newAst.body;
+
+  traverser(ast, {
+    NumberLiteral: {
+      enter(node, parent) {
+        parent.context.push({
+          type: "NumberLiteral",
+          value: node.value,
+        });
+      },
+    },
+
+    StringLiteral: {
+      enter(node, parent) {
+        parent.context.push({
+          type: "StringLiteral",
+          value: node.value,
+        });
+      },
+    },
+
+    CallExpression: {
+      enter(node, parent) {
+        let expression = {
+          type: "CallExpression",
+          callee: {
+            type: "Identifier",
+            name: node.name,
+          },
+          arguments: [],
+        };
+        node.context = expression.arguments;
+
+        if (parent.type !== "CallExpression") {
+          expression = {
+            type: "ExpressionStatement",
+            expression: expression,
+          };
+        }
+        parent.context.push(expression);
+      },
+    },
+  });
+  return newAst;
+};
+
+// let tokens = [
+//   { type: "paren", value: "(" },
+//   { type: "string", value: "add" },
+//   { type: "number", value: "2" },
+//   { type: "paren", value: "(" },
+//   { type: "string", value: "subtract" },
+//   { type: "number", value: "4" },
+//   { type: "number", value: "2" },
+//   { type: "paren", value: ")" },
+//   { type: "paren", value: ")" },
+// ];
+
+// console.log(transformer(parser(tokens)));

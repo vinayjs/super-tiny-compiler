@@ -1,3 +1,6 @@
+// THIS IS JUST A ROUGH WORK SPACE TO TEST THE FUNCTIONS/ALTER/REFACTOR THE THE FUNCTIONS !JUST A WORKSPACE TILL THE COMPILER IS COMPLETE
+
+
 // let tokens = [
 //     { type: "paren", value: "(" },
 //     { type: "string", value: "add" },
@@ -10,7 +13,7 @@
 //     { type: "paren", value: ")" },
 //   ];
 
-//   function createAst(){
+//   const createAst= () => {
 //     let current = 0;
 //     let token = tokens[current]
 //     console.log(token)
@@ -98,3 +101,71 @@
 
 //   traverseNode(ast, null);
 // }
+
+// const transformer=(ast) => {
+
+//   let newAst = {
+//     type: 'Program',
+//     body: [],
+//   };
+
+//   ast._context = newAst.body;
+
+//   traverser(ast, {
+
+//     NumberLiteral: {
+//       enter(node, parent) {
+//         parent._context.push({
+//           type: 'NumberLiteral',
+//           value: node.value,
+//         });
+//       },
+//     },
+
+//     StringLiteral: {
+//       enter(node, parent) {
+//         parent._context.push({
+//           type: 'StringLiteral',
+//           value: node.value,
+//         });
+//       },
+//     },
+
+//     CallExpression: {
+//       enter(node, parent) {
+//         let expression = {
+//           type: 'CallExpression',
+//           callee: {
+//             type: 'Identifier',
+//             name: node.name,
+//           },
+//           arguments: [],
+//         };
+//         node._context = expression.arguments;
+
+//         if (parent.type !== 'CallExpression') {
+//           expression = {
+//             type: 'ExpressionStatement',
+//             expression: expression,
+//           };
+//         }
+//         parent._context.push(expression);
+//       },
+//     }
+//   });
+//   return newAst;
+// }
+
+// let tokens = [
+//   { type: "paren", value: "(" },
+//   { type: "string", value: "add" },
+//   { type: "number", value: "2" },
+//   { type: "paren", value: "(" },
+//   { type: "string", value: "subtract" },
+//   { type: "number", value: "4" },
+//   { type: "number", value: "2" },
+//   { type: "paren", value: ")" },
+//   { type: "paren", value: ")" },
+// ];
+
+// console.log(transformer(parser(tokens)));
