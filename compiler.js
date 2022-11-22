@@ -11,6 +11,8 @@
 // add 2 (subtract 4 2))    add(2, subtract(4, 2))
 ////////////////////////////////////////////////////////////////////////SOLUTION/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
 // function split the code into tokens
 const tokenizer = (input) => {
   if (isValidInput(input) !== "true") return "Not a valid input";
@@ -227,16 +229,11 @@ const codeGenerator = (node) => {
   }
 }
 
-// let tokens = [
-//   { type: "paren", value: "(" },
-//   { type: "string", value: "add" },
-//   { type: "number", value: "2" },
-//   { type: "paren", value: "(" },
-//   { type: "string", value: "subtract" },
-//   { type: "number", value: "4" },
-//   { type: "number", value: "2" },
-//   { type: "paren", value: ")" },
-//   { type: "paren", value: ")" },
-// ];
-
-// console.log(transformer(parser(tokens)));
+// the compiler func which calls all the necessary child functions to execute the whole compilation process.
+const compiler = (input) => {
+  let tokens = tokenizer(input);
+  let ast    = parser(tokens);
+  let newAst = transformer(ast);
+  let output = codeGenerator(newAst);
+  return output;
+}
